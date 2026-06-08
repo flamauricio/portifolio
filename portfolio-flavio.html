@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flavio Mauricio Valerio — AI Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #18181f;
+    --accent: #00e5a0;
+    --accent2: #0066ff;
+    --text: #f0f0f8;
+    --muted: #7a7a9a;
+    --border: rgba(255,255,255,0.07);
+    --mono: 'Space Mono', monospace;
+    --sans: 'DM Sans', sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* noise overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* grid bg */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 1.2rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 13px;
+    font-family: var(--mono);
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 80px;
+  }
+
+  .hero-inner {
+    padding: 4rem 0 6rem;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: var(--mono);
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 700;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.5rem;
+  }
+
+  h1 .highlight {
+    color: var(--accent);
+    display: block;
+  }
+
+  .hero-desc {
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 520px;
+    margin-bottom: 2.5rem;
+    line-height: 1.8;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.75rem 1.5rem;
+    background: var(--accent);
+    color: #000;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+
+  .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.75rem 1.5rem;
+    background: transparent;
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 13px;
+    text-decoration: none;
+    letter-spacing: 0.06em;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.3); color: var(--accent); }
+
+  /* glowing dot */
+  .dot-live {
+    display: inline-block;
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    animation: pulse 2s ease infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(0,229,160,0.4); }
+    50% { box-shadow: 0 0 0 6px rgba(0,229,160,0); }
+  }
+
+  /* ── SECTION SHARED ── */
+  section {
+    padding: 5rem 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  h2 {
+    font-family: var(--mono);
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    margin-bottom: 3rem;
+    letter-spacing: -0.02em;
+  }
+
+  /* ── ABOUT ── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .about-text p {
+    color: var(--muted);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .about-text p strong { color: var(--text); font-weight: 500; }
+
+  .info-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 1px solid var(--border);
+  }
+
+  .info-row {
+    display: flex;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    gap: 1rem;
+  }
+
+  .info-row:last-child { border-bottom: none; }
+
+  .info-key {
+    color: var(--muted);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    min-width: 90px;
+    padding-top: 2px;
+  }
+
+  .info-val { color: var(--text); }
+  .info-val a { color: var(--accent); text-decoration: none; }
+  .info-val a:hover { text-decoration: underline; }
+
+  /* ── EXPERIENCE ── */
+  .timeline {
+    position: relative;
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .tl-item {
+    position: relative;
+  }
+
+  .tl-dot {
+    position: absolute;
+    left: -1.5rem;
+    top: 6px;
+    width: 9px;
+    height: 9px;
+    background: var(--bg);
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    transform: translateX(-4px);
+  }
+
+  .tl-date {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 0.3rem;
+  }
+
+  .tl-role {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.15rem;
+  }
+
+  .tl-company {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+
+  .tl-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ── SKILLS ── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+    background: var(--border);
+  }
+
+  .skill-card {
+    background: var(--bg2);
+    padding: 1.25rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: background 0.2s;
+  }
+
+  .skill-card:hover { background: var(--bg3); }
+
+  .skill-icon {
+    font-size: 1.4rem;
+  }
+
+  .skill-name {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text);
+    letter-spacing: 0.04em;
+  }
+
+  .skill-bar-track {
+    height: 2px;
+    background: var(--border);
+    width: 100%;
+  }
+
+  .skill-bar-fill {
+    height: 2px;
+    background: var(--accent);
+    transition: width 1s ease;
+  }
+
+  /* ── EDUCATION ── */
+  .edu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--border);
+    background: var(--border);
+  }
+
+  .edu-card {
+    background: var(--bg2);
+    padding: 1.5rem;
+  }
+
+  .edu-degree {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .edu-school {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 0.2rem;
+  }
+
+  .edu-field {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .edu-year {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── CERTS ── */
+  .certs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    border: 1px solid var(--border);
+    background: var(--border);
+  }
+
+  .cert-item {
+    background: var(--bg2);
+    padding: 0.9rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: background 0.2s;
+  }
+
+  .cert-item:hover { background: var(--bg3); }
+
+  .cert-bullet {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .cert-name {
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  /* ── CONTACT ── */
+  .contact-box {
+    border: 1px solid var(--border);
+    padding: 2.5rem;
+    text-align: center;
+    background: var(--bg2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-box::before {
+    content: '';
+    position: absolute;
+    bottom: -60px; left: 50%;
+    transform: translateX(-50%);
+    width: 300px; height: 120px;
+    background: radial-gradient(ellipse, rgba(0,229,160,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .contact-box h3 {
+    font-family: var(--mono);
+    font-size: 1.6rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .contact-box p {
+    color: var(--muted);
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 2rem;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.08em;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .fade-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 640px) {
+    .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .nav-links { display: none; }
+    h1 { font-size: 2.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="nav-logo">FMV_</a>
+  <ul class="nav-links">
+    <li><a href="#sobre">sobre</a></li>
+    <li><a href="#experiencia">experiência</a></li>
+    <li><a href="#habilidades">skills</a></li>
+    <li><a href="#formacao">formação</a></li>
+    <li><a href="#contato">contato</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-tag">
+        <span class="dot-live"></span>
+        AI engineer
+      </div>
+      <h1>
+        Flavio
+        <span class="highlight">Mauricio.</span>
+      </h1>
+      <p class="hero-desc">
+        AI / GenAI Software Engineer na <strong style="color:var(--text)">Accenture</strong>. 
+        Especialista em Machine Learning, Redes Neurais e automações com IA Generativa. 
+        5 anos construindo soluções inteligentes que transformam dados em valor real.
+      </p>
+      <div class="hero-ctas">
+        <a href="#contato" class="btn-primary">→ entrar em contato</a>
+        <a href="https://github.com/flamauricio" target="_blank" class="btn-ghost">↗ ver projetos</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOBRE -->
+<section id="sobre">
+  <div class="container fade-up">
+    <div class="section-label">// 01 sobre</div>
+    <h2>quem sou</h2>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          Entusiasta de tecnologia com foco em <strong>Python, automações e IA Generativa (GenAI)</strong>. 
+          Minha jornada é impulsionada pela curiosidade e pelo desejo constante de aprender e inovar.
+        </p>
+        <p>
+          Sou especializado no desenvolvimento de <strong>Inteligência Artificial</strong>, com foco em 
+          Redes Neurais e Modelos Preditivos usando frameworks como <strong>TensorFlow e PyTorch</strong>.
+        </p>
+        <p>
+          Meu objetivo é criar soluções que transformem dados em insights valiosos e resolvam 
+          problemas complexos de forma inteligente e eficaz.
+        </p>
+      </div>
+      <div class="info-table">
+        <div class="info-row">
+          <span class="info-key">LOCALIZAÇÃO</span>
+          <span class="info-val">São Caetano do Sul, SP</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">EMPRESA</span>
+          <span class="info-val">Accenture Brasil</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">EMAIL</span>
+          <span class="info-val"><a href="mailto:fla.mauricio.valerio17@gmail.com">fla.mauricio.valerio17@gmail.com</a></span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">LINKEDIN</span>
+          <span class="info-val"><a href="https://www.linkedin.com/in/flaviomauricio17" target="_blank">flaviomauricio17</a></span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">GITHUB</span>
+          <span class="info-val"><a href="https://github.com/flamauricio" target="_blank">flamauricio</a></span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">FOCO</span>
+          <span class="info-val">AI · GenAI · MLOps</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIÊNCIA -->
+<section id="experiencia">
+  <div class="container fade-up">
+    <div class="section-label">// 02 experiência</div>
+    <h2>trajetória</h2>
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">NOV 2025 – PRESENTE · 8 meses</div>
+        <div class="tl-role">Tech Architecture Analyst</div>
+        <div class="tl-company">Accenture Brasil · São Paulo</div>
+        <div class="tl-desc">
+          Liderança técnica em projetos de arquitetura de software com foco em soluções de IA e GenAI. 
+          Desenvolvimento e implementação de sistemas escaláveis usando as mais recentes tecnologias de Inteligência Artificial Generativa.
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">DEZ 2022 – NOV 2025 · 3 anos</div>
+        <div class="tl-role">Custom Software Engineer Associate</div>
+        <div class="tl-company">Accenture Brasil · São Paulo</div>
+        <div class="tl-desc">
+          Desenvolvimento de soluções automatizadas para clientes enterprise. 
+          Criação de pipelines de dados, modelos preditivos e automações com Python. 
+          Especialização em migração e governança de dados.
+        </div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">JUL 2021 – DEZ 2022 · 1 ano e 6 meses</div>
+        <div class="tl-role">Estagiário</div>
+        <div class="tl-company">Accenture Brasil · São Paulo</div>
+        <div class="tl-desc">
+          Início da jornada na Accenture, com foco em desenvolvimento de software e aprendizado de práticas ágeis e tecnologias de nuvem.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="habilidades">
+  <div class="container fade-up">
+    <div class="section-label">// 03 habilidades</div>
+    <h2>stack técnico</h2>
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-icon">🐍</div>
+        <div class="skill-name">Python</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%"></div></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🤖</div>
+        <div class="skill-name">TensorFlow</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%"></div></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🔥</div>
+        <div class="skill-name">PyTorch</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:80%"></div></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">✨</div>
+        <div class="skill-name">GenAI / LLMs</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:90%"></div></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🧠</div>
+        <div class="skill-name">Machine Learning</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:88%"></div></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🕸️</div>
+        <div class="skill-name">Redes Neurais</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%"></div></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🗄️</div>
+        <div class="skill-name">Data Migration</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:82%"></div></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🔐</div>
+        <div class="skill-name">API Security</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:75%"></div></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">🐧</div>
+        <div class="skill-name">Linux</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:78%"></div></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">📜</div>
+        <div class="skill-name">JavaScript</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:72%"></div></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">📊</div>
+        <div class="skill-name">Data Governance</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:80%"></div></div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-icon">⚡</div>
+        <div class="skill-name">Automações</div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" style="width:92%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMAÇÃO -->
+<section id="formacao">
+  <div class="container fade-up">
+    <div class="section-label">// 04 formação</div>
+    <h2>educação</h2>
+    <div class="edu-grid">
+      <div class="edu-card">
+        <div class="edu-degree">Pós-Graduação</div>
+        <div class="edu-school">IMT — Instituto Mauá de Tecnologia</div>
+        <div class="edu-field">Ciências de Dados e Inteligência Artificial</div>
+        <div class="edu-year">2023 – 2024</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-degree">Tecnólogo</div>
+        <div class="edu-school">São Paulo Tech School — SPTech</div>
+        <div class="edu-field">Análise e Desenvolvimento de Sistemas</div>
+        <div class="edu-year">2021 – 2022</div>
+      </div>
+      <div class="edu-card">
+        <div class="edu-degree">Técnico</div>
+        <div class="edu-school">ETEC Jorge Street</div>
+        <div class="edu-field">Desenvolvimento de Sistemas</div>
+        <div class="edu-year">2019 – 2020</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 3rem;">
+      <div class="section-label" style="margin-bottom: 1rem;">// certificações</div>
+      <div class="certs-list">
+        <div class="cert-item">
+          <div class="cert-bullet"></div>
+          <div class="cert-name">Reinvention with Agentic AI</div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-bullet"></div>
+          <div class="cert-name">JavaScript: Getting Started with JavaScript Programming</div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-bullet"></div>
+          <div class="cert-name">API Security</div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-bullet"></div>
+          <div class="cert-name">Linux Fundamentos</div>
+        </div>
+        <div class="cert-item">
+          <div class="cert-bullet"></div>
+          <div class="cert-name">JavaScript Algorithms and Data Structures Masterclass</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section id="contato">
+  <div class="container fade-up">
+    <div class="section-label">// 05 contato</div>
+    <h2>vamos conversar</h2>
+    <div class="contact-box">
+      <h3>Pronto para o próximo desafio</h3>
+      <p>Aberto a oportunidades em AI, GenAI, Machine Learning e arquitetura de software.</p>
+      <div class="contact-links">
+        <a href="mailto:fla.mauricio.valerio17@gmail.com" class="btn-primary">→ enviar e-mail</a>
+        <a href="https://www.linkedin.com/in/flaviomauricio17" target="_blank" class="btn-ghost">↗ linkedin</a>
+        <a href="https://github.com/flamauricio" target="_blank" class="btn-ghost">↗ github</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    © 2025 Flavio Mauricio Valerio · Desenvolvido com HTML/CSS/JS
+  </div>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
